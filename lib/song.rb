@@ -10,13 +10,13 @@ class Song
     self.class.all << self
   end
 
-  def Song.create
+  def self.create
     song = Song.new #initializes a song
     song.save #saves it to all (you can do it literally or through song.all)
     song #returns song instance that was initialized and save
   end
 
-  def Song.new_by_name(song_name)#takes in the string of names
+  def self.new_by_name(song_name)#takes in the string of names
   song = self.new ##should return an instance of Song and NOT  a simple string
   song.name = song_name #returns a song instance with that name set as the name property
   song 
@@ -35,27 +35,38 @@ class Song
   def self.find_or_create_by_name(song_name)#accept a string name and either:
     #return a matching song instance with that name OR
     #create a new song with the name AND return the song instance
-    results = self.find_by_name(song_name)
-    if results
-      results 
-    else 
-      self.create_by_name(song_name)
-    end
+    self.find_by_name(song_name) || self.create_by_name(song_name)
+    # results = self.find_by_name(song_name)
+    # if results
+    #   binding.pry
+    #   results 
+    # else 
+    #   self.create_by_name(song_name)
+    # end
   end
 
-  def Song.alphabetical
-   self.sort_by{|s| s.name} #returns all the songs in (a-z) order *use: array#sort_by
+  def self.alphabetical
+    self.all.sort_by{|s| s.name} #returns all the songs in (a-z) order *use: array#sort_by
   end
 
-  def Song.new_from_filename
-  #accepts a filename in the format of "#{artist}-#{song_name}.mp3"
+  def self.new_from_filename(filename) #accepts a filename
+  array = filename.split(" - ")  #format to "#{artist}-#{song_name}.mp3"
+  array[1] = array[1].chomp(".mp3")
+  song = self.new
+  song.name = array[1]
+  song.artist_name = array [0]
+  song 
   end
 
-  def Song.create_from_filename
-  #pass the file name correctly, but should save the song instance that was created
+  def self.create_from_filename(filename)
+  results = self.new_from_filename(filename) #pass the file name correctly, but should save the song instance that was created
+  song = self.create 
+  song.name = results.name 
+  song.artist_name = results.artist_name 
+  song 
   end
 
-  def Song.destroy_all
-  #reset the state of the @@all class variable to empty array
+  def self.destroy_all
+  self.all.clear #reset the state of the @@all class variable to empty array
   end
 end
